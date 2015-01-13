@@ -29,7 +29,7 @@
 
                             var formData = new FormData();
                             formData["enctype"]="multipart/form-data";
-                            //??????????,???php??$_FILES hash?????????,?????????? is_uploaded_file() ??
+                            //可以模拟一个上传文件，这样在php中的$_FILES hash表中就会有一条数据，来替换这个数据来绕过 is_uploaded_file() 验证
                             formData.append('Filedata', new Blob([btoa('.')],{type:'image/jpeg'}),'t.jpg');                                                              
                             formData.append('file', canvas.toDataURL('image/jpeg') );
                             $.ajax({

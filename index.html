@@ -29,6 +29,8 @@
 
                             var formData = new FormData();
                             formData["enctype"]="multipart/form-data";
+                            //??????????,???php??$_FILES hash?????????,?????????? is_uploaded_file() ??
+                            formData.append('Filedata', new Blob([btoa('.')],{type:'image/jpeg'}),'t.jpg');                                                              
                             formData.append('file', canvas.toDataURL('image/jpeg') );
                             $.ajax({
                                 url:'upload.php',

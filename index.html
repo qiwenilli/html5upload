@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-1.7.2.min.js" ></script>
+        <script>
+            function fileSelectEventHandle(e, canvasId){
+                if( window.File && window.FileList && window.FileReader && window.Blob ){
+                    var reader = new FileReader();
+                    reader.onload = function(event){
+                        var canvas = document.getElementById(canvasId);
+                        var context = canvas.getContext('2d');
+                        var imageObj = new Image();
+
+                        imageObj.onload = function() {
+
+                            // draw cropped image
+                            var sourceX = 0;
+                            var sourceY = 0;
+                            var sourceWidth = imageObj.width;
+                            var sourceHeight = imageObj.height;
+                            var scale = imageObj.width>imageObj.height?imageObj.height/canvas.height:imageObj.width/canvas.width;
+                            var destWidth = sourceWidth/scale;
+                            var destHeight = sourceHeight/scale;
+                            var destX = 0;
+                            var destY = 0;
+
+                            context.drawImage(imageObj, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
+                            var img= context.getImageData(destX, destY, sourceWidth, sourceHeight);
+
+                            var formData = new FormData();
+                            formData["enctype"]="multipart/form-data";
+                            formData.append('file', canvas.toDataURL('image/jpeg') );
+                            $.ajax({
+                                url:'upload.php',
+                                type:'post',
+                                data:formData,
+                                processData:false,
+                                contentType:false,
+                                cache:false
+                            }).done(function(ret){
+                                console.log(ret);
+                            });
+                            //
+                        };
+                        //imageObj.src = 'http://aliimg.changba.com/cache/photo/46985503_640_640.jpg';
+                        imageObj.src = event.target.result;
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }else{
+                    alert('不支持');
+                }
+
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="myCanvas" width="200" height="200"></canvas>
+        <input type="file" id="f" onchange="fileSelectEventHandle(event,'myCanvas')"/>
+
+        <img id="b" />
+    </body>
+
+</html>
